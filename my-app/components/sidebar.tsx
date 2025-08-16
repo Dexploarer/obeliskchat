@@ -155,141 +155,96 @@ const PortfolioIcon = () => (
   </svg>
 )
 
-const NewsIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v6m8-8H9M7 16h6M7 8h6v4H7V8z"
-    />
-  </svg>
-)
-
-const SocialIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-    />
-  </svg>
-)
-
-const ForumIcon = () => (
-  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h8z"
-    />
-  </svg>
-)
 
 interface SidebarProps {
   className?: string
+  onNavigate?: (item: string) => void
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onNavigate }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   const section1Items = [
     {
+      id: "new-chat",
       title: "New Chat",
       icon: PlusIcon,
-      href: "/",
       variant: "default" as const,
     },
     {
+      id: "history",
       title: "History",
       icon: HistoryIcon,
-      href: "/history",
       variant: "ghost" as const,
     },
     {
+      id: "agent",
       title: "Agent",
       icon: AgentIcon,
-      href: "/agent",
       variant: "ghost" as const,
     },
     {
+      id: "mcp-tools",
       title: "MCP Tools",
       icon: MCPIcon,
-      href: "/mcp-tools",
       variant: "ghost" as const,
     },
     {
+      id: "connections",
       title: "Connections",
       icon: ConnectionsIcon,
-      href: "/connections",
       variant: "ghost" as const,
     },
   ]
 
   const section2Items = [
     {
+      id: "token-search",
       title: "Token Search",
       icon: SearchIcon,
-      href: "/token-search",
       variant: "ghost" as const,
     },
     {
+      id: "token-creation",
       title: "Token Creation",
       icon: TokenIcon,
-      href: "/token-creation",
       variant: "ghost" as const,
     },
     {
+      id: "portfolio",
       title: "Portfolio",
       icon: PortfolioIcon,
-      href: "/portfolio",
       variant: "ghost" as const,
     },
     {
+      id: "blinks",
       title: "Blinks",
       icon: BotIcon,
-      href: "/blinks",
       variant: "ghost" as const,
     },
   ]
 
-  const section3Items = [
-    {
-      title: "News",
-      icon: NewsIcon,
-      href: "/news",
-      variant: "ghost" as const,
-    },
-    {
-      title: "Social Feed",
-      icon: SocialIcon,
-      href: "/social",
-      variant: "ghost" as const,
-    },
-    {
-      title: "Forum",
-      icon: ForumIcon,
-      href: "/forum",
-      variant: "ghost" as const,
-    },
-  ]
 
   const bottomItems = [
     {
+      id: "account",
       title: "Account",
       icon: UserIcon,
-      href: "/account",
       variant: "ghost" as const,
     },
     {
+      id: "settings",
       title: "Settings",
       icon: SettingsIcon,
-      href: "/app-settings",
       variant: "ghost" as const,
     },
   ]
+
+  const handleItemClick = (itemId: string) => {
+    if (onNavigate) {
+      onNavigate(itemId)
+    }
+  }
 
   return (
     <div
@@ -324,7 +279,7 @@ export function Sidebar({ className }: SidebarProps) {
           <nav className="space-y-2">
             {section1Items.map((item) => (
               <Button
-                key={item.href}
+                key={item.id}
                 variant={item.variant}
                 className={cn(
                   "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
@@ -332,12 +287,10 @@ export function Sidebar({ className }: SidebarProps) {
                   item.variant === "default" &&
                     "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90",
                 )}
-                asChild
+                onClick={() => handleItemClick(item.id)}
               >
-                <a href={item.href}>
-                  <item.icon />
-                  {!isCollapsed && <span>{item.title}</span>}
-                </a>
+                <item.icon />
+                {!isCollapsed && <span>{item.title}</span>}
               </Button>
             ))}
           </nav>
@@ -348,62 +301,37 @@ export function Sidebar({ className }: SidebarProps) {
           <nav className="space-y-2">
             {section2Items.map((item) => (
               <Button
-                key={item.href}
+                key={item.id}
                 variant={item.variant}
                 className={cn(
                   "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   isCollapsed && "px-2 justify-center",
                 )}
-                asChild
+                onClick={() => handleItemClick(item.id)}
               >
-                <a href={item.href}>
-                  <item.icon />
-                  {!isCollapsed && <span>{item.title}</span>}
-                </a>
+                <item.icon />
+                {!isCollapsed && <span>{item.title}</span>}
               </Button>
             ))}
           </nav>
         </div>
 
-        {/* Section 3 */}
-        <div className="flex-1 overflow-y-auto p-4 border-b border-sidebar-border/50">
-          <nav className="space-y-2">
-            {section3Items.map((item) => (
-              <Button
-                key={item.href}
-                variant={item.variant}
-                className={cn(
-                  "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                  isCollapsed && "px-2 justify-center",
-                )}
-                asChild
-              >
-                <a href={item.href}>
-                  <item.icon />
-                  {!isCollapsed && <span>{item.title}</span>}
-                </a>
-              </Button>
-            ))}
-          </nav>
-        </div>
 
         {/* Bottom Items */}
         <div className="p-4">
           <nav className="space-y-2">
             {bottomItems.map((item) => (
               <Button
-                key={item.href}
+                key={item.id}
                 variant={item.variant}
                 className={cn(
                   "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   isCollapsed && "px-2 justify-center",
                 )}
-                asChild
+                onClick={() => handleItemClick(item.id)}
               >
-                <a href={item.href}>
-                  <item.icon />
-                  {!isCollapsed && <span>{item.title}</span>}
-                </a>
+                <item.icon />
+                {!isCollapsed && <span>{item.title}</span>}
               </Button>
             ))}
           </nav>

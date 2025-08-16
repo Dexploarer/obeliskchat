@@ -3,14 +3,14 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "cd my-app && npm run dev",
-    "build": "cd my-app && npm run build",
-    "start": "cd my-app && npm run start",
-    "lint": "cd my-app && npm run lint",
-    "type-check": "cd my-app && npm run type-check",
-    "test": "cd my-app && npm run test",
-    "clean": "cd my-app && npm run clean",
-    "setup": "cd my-app && npm install"
+    "dev": "cd my-app && bun run dev",
+    "build": "cd my-app && bun run build",
+    "start": "cd my-app && bun run start",
+    "lint": "cd my-app && bun run lint",
+    "type-check": "cd my-app && bun run type-check",
+    "test": "cd my-app && bun run test",
+    "clean": "cd my-app && bun run clean",
+    "setup": "cd my-app && bun install"
   },
   "devDependencies": {
     "@types/bun": "latest"

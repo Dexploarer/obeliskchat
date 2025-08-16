@@ -26,13 +26,27 @@ import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
 import { useChat } from "@ai-sdk/react"
 import { Response } from "@/components/ai-elements/response"
-import { GlobeIcon, MicIcon, PlusIcon } from "lucide-react"
+import { GlobeIcon, MicIcon, PlusIcon, BotIcon } from "lucide-react"
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion"
 import { Source, Sources, SourcesContent, SourcesTrigger } from "@/components/ai-elements/source"
 import { Reasoning, ReasoningTrigger, ReasoningContent } from "@/components/ai-elements/reasoning"
 import { Loader } from "@/components/ai-elements/loader"
 import { Tool, ToolHeader, ToolContent, ToolInput, ToolOutput } from "@/components/ai-elements/tool"
 import { MobileSidebar } from "@/components/mobile-sidebar"
+import { Sidebar } from "@/components/sidebar"
+import { SolanaStatus } from "@/components/solana-status"
+
+// Import all modals
+import { HistoryModal } from "@/components/modals/history-modal"
+import { AgentModal } from "@/components/modals/agent-modal"
+import { MCPToolsModal } from "@/components/modals/mcp-tools-modal"
+import { ConnectionsModal } from "@/components/modals/connections-modal"
+import { TokenSearchModal } from "@/components/modals/token-search-modal"
+import { TokenCreationModal } from "@/components/modals/token-creation-modal"
+import { PortfolioModal } from "@/components/modals/portfolio-modal"
+import { SettingsModal } from "@/components/modals/settings-modal"
+import { BlinksModal } from "@/components/modals/blinks-modal"
+import { PlaceholderModal } from "@/components/modals/placeholder-modal"
 
 const models = [
   // Default first: GPT-5 Mini
@@ -49,27 +63,36 @@ const models = [
 
 const availableTools = [
   { id: "web-search", name: "Web Search", description: "Search the web for current information" },
-  { id: "calculator", name: "Calculator", description: "Perform mathematical calculations" },
-  { id: "code-interpreter", name: "Code Interpreter", description: "Execute and analyze code" },
-  { id: "weather", name: "Weather", description: "Get current weather information" },
-  { id: "solana-balance", name: "Solana Balance", description: "Check SOL wallet balances" },
-  { id: "solana-token-price", name: "Token Prices", description: "Get Solana token prices and market data" },
+  { id: "openai-image-generator", name: "Image Generator", description: "Generate images using OpenAI's GPT-4o (gpt-image-1)" },
+  { id: "solana-balance", name: "Solana Balance", description: "Check real SOL wallet balances on-chain" },
+  { id: "solana-token-price", name: "Token Prices", description: "Get live token prices from CoinGecko" },
+  { id: "transfer-sol", name: "Transfer SOL", description: "Send SOL between wallets (requires private key)" },
+  { id: "get-transaction", name: "Get Transaction", description: "Get details of any Solana transaction" },
   { id: "defi-analyzer", name: "DeFi Analyzer", description: "Analyze DeFi protocols and yields" },
   { id: "nft-analyzer", name: "NFT Analyzer", description: "Analyze NFT collections and trends" },
-  { id: "image-generator", name: "Image Generator", description: "Generate images from text descriptions" },
-  { id: "pdf-reader", name: "PDF Reader", description: "Read and analyze PDF documents" },
 ]
 
 const ChatBotDemo = () => {
   const [input, setInput] = useState("")
   const [model, setModel] = useState<string>(models[0].id)
   const [webSearch, setWebSearch] = useState(false)
-  const [enabledTools, setEnabledTools] = useState<string[]>(["web-search"])
+  const [enabledTools, setEnabledTools] = useState<string[]>(["web-search", "openai-image-generator", "solana-balance"])
   const [toolsOpen, setToolsOpen] = useState(false)
   const [mcpTools, setMcpTools] = useState<Record<string, any>>({})
   const [allAvailableTools, setAllAvailableTools] = useState(availableTools)
   const currentProvider = models.find((m) => m.id === model)?.provider || "openai"
   const { messages, sendMessage, status } = useChat()
+
+  // Modal states
+  const [historyModalOpen, setHistoryModalOpen] = useState(false)
+  const [agentModalOpen, setAgentModalOpen] = useState(false)
+  const [mcpToolsModalOpen, setMCPToolsModalOpen] = useState(false)
+  const [connectionsModalOpen, setConnectionsModalOpen] = useState(false)
+  const [tokenSearchModalOpen, setTokenSearchModalOpen] = useState(false)
+  const [tokenCreationModalOpen, setTokenCreationModalOpen] = useState(false)
+  const [portfolioModalOpen, setPortfolioModalOpen] = useState(false)
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false)
+  const [blinksModalOpen, setBlinksModalOpen] = useState(false)
 
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
@@ -213,10 +236,52 @@ const ChatBotDemo = () => {
     setToolsOpen(true)
   }
 
+  // Handle sidebar navigation
+  const handleNavigation = (itemId: string) => {
+    switch (itemId) {
+      case "new-chat":
+        // Clear current chat
+        window.location.reload()
+        break
+      case "history":
+        setHistoryModalOpen(true)
+        break
+      case "agent":
+        setAgentModalOpen(true)
+        break
+      case "mcp-tools":
+        setMCPToolsModalOpen(true)
+        break
+      case "connections":
+        setConnectionsModalOpen(true)
+        break
+      case "token-search":
+        setTokenSearchModalOpen(true)
+        break
+      case "token-creation":
+        setTokenCreationModalOpen(true)
+        break
+      case "portfolio":
+        setPortfolioModalOpen(true)
+        break
+      case "blinks":
+        setBlinksModalOpen(true)
+        break
+      case "settings":
+        setSettingsModalOpen(true)
+        break
+    }
+  }
+
   return (
-    <div className="p-6 relative size-full h-screen">
-      <MobileSidebar />
-      <div className="flex flex-col h-full">
+    <div className="flex h-screen">
+      <Sidebar className="hidden md:flex" onNavigate={handleNavigation} />
+      <div className="flex-1 p-6 relative overflow-hidden">
+        <div className="absolute top-4 right-4 z-10">
+          <SolanaStatus />
+        </div>
+        <MobileSidebar onNavigate={handleNavigation} />
+        <div className="flex flex-col h-full">
         <Conversation className="h-full">
           <ConversationContent>
             {messages.map((message) => {
@@ -493,7 +558,22 @@ const ChatBotDemo = () => {
             <PromptInputSubmit disabled={!input || transcribing} status={transcribing ? "submitted" : status} />
           </PromptInputToolbar>
         </PromptInput>
+        </div>
       </div>
+
+      {/* Modals */}
+      <HistoryModal open={historyModalOpen} onOpenChange={setHistoryModalOpen} />
+      <AgentModal open={agentModalOpen} onOpenChange={setAgentModalOpen} />
+      <MCPToolsModal open={mcpToolsModalOpen} onOpenChange={setMCPToolsModalOpen} />
+      <ConnectionsModal open={connectionsModalOpen} onOpenChange={setConnectionsModalOpen} />
+      <TokenSearchModal open={tokenSearchModalOpen} onOpenChange={setTokenSearchModalOpen} />
+      <TokenCreationModal open={tokenCreationModalOpen} onOpenChange={setTokenCreationModalOpen} />
+      <PortfolioModal open={portfolioModalOpen} onOpenChange={setPortfolioModalOpen} />
+      <SettingsModal open={settingsModalOpen} onOpenChange={setSettingsModalOpen} />
+      
+      {/* Blinks Modal */}
+      <BlinksModal open={blinksModalOpen} onOpenChange={setBlinksModalOpen} />
+      
     </div>
   )
 }

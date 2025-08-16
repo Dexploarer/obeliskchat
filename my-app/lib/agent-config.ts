@@ -13,18 +13,16 @@ export const AGENT_CONFIG = {
   
   // Tool categories and their priorities
   toolCategories: {
-    'information': ['web-search', 'weather', 'pdf-reader'],
-    'computation': ['calculator', 'code-interpreter'],
+    'information': ['web-search'],
+    'generation': ['openai-image-generator'],
     'blockchain': ['solana-balance', 'solana-token-price', 'defi-analyzer', 'nft-analyzer'],
-    'generation': ['image-generator'],
   },
   
   // Default enabled tools for different scenarios
   defaultToolsets: {
-    'general': ['web-search', 'calculator', 'weather'],
-    'developer': ['web-search', 'calculator', 'code-interpreter', 'pdf-reader'],
-    'crypto': ['web-search', 'calculator', 'solana-balance', 'solana-token-price', 'defi-analyzer', 'nft-analyzer'],
-    'creative': ['web-search', 'calculator', 'image-generator', 'code-interpreter'],
+    'general': ['web-search', 'openai-image-generator'],
+    'solana': ['solana-balance', 'solana-token-price', 'defi-analyzer', 'nft-analyzer'],
+    'complete': ['web-search', 'openai-image-generator', 'solana-balance', 'solana-token-price', 'defi-analyzer', 'nft-analyzer'],
   },
   
   // Provider-specific tool support

@@ -1,8 +1,8 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import Script from "next/script"
 import "./globals.css"
-import { Sidebar } from "@/components/sidebar"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +27,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="https://plugin.jup.ag/plugin-v1.js"
+          strategy="beforeInteractive"
+          data-preload
+          defer
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="flex h-screen">
-          <Sidebar className="hidden md:flex" />
-          <main className="flex-1 overflow-hidden">{children}</main>
-        </div>
+        {children}
       </body>
     </html>
   )

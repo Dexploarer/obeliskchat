@@ -11,8 +11,19 @@ const MenuIcon = () => (
   </svg>
 )
 
-export function MobileSidebar() {
+interface MobileSidebarProps {
+  onNavigate?: (item: string) => void
+}
+
+export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
   const [open, setOpen] = useState(false)
+
+  const handleNavigation = (itemId: string) => {
+    setOpen(false) // Close the mobile sidebar after navigation
+    if (onNavigate) {
+      onNavigate(itemId)
+    }
+  }
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -23,7 +34,7 @@ export function MobileSidebar() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-64">
-        <Sidebar />
+        <Sidebar onNavigate={handleNavigation} />
       </SheetContent>
     </Sheet>
   )
